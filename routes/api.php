@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +23,11 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
-// Эндпоинты для управления тасками
-Route::get('/task/', [TaskController::class, 'sortArray']);
-Route::get('/task/count/{array}', [TaskController::class, 'calcSize']);
-Route::post('/task/{element}', [TaskController::class, 'addElements']);
-Route::post('/task/{element}', [TaskController::class, 'remove_element']);
+// Эндпоинты для управления избранным
+Route::get('/favorite/', [FavoriteController::class, 'list']);
+Route::get('/favorite/count/', [FavoriteController::class, 'count']);
+Route::post('/favorite/{element}', [FavoriteController::class, 'add']);
+Route::delete('/favorite/{element}', [FavoriteController::class, 'delete']);
+
+// Эндпоинты для каталога
+Route::get('/product/', [ProductController::class, 'list']);
