@@ -24,10 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Эндпоинты для управления избранным
-Route::get('/favorite/', [FavoriteController::class, 'list']);
-Route::get('/favorite/count/', [FavoriteController::class, 'count']);
-Route::post('/favorite/{element}', [FavoriteController::class, 'add']);
-Route::delete('/favorite/{element}', [FavoriteController::class, 'delete']);
+Route::get('/favorite/{id}', [FavoriteController::class, 'list']);
+Route::post('/favorite/{element}/{id}', [FavoriteController::class, 'add']);
+Route::delete('/favorite/{element}/{id}', [FavoriteController::class, 'delete']);
 
 // Эндпоинты для каталога
 Route::get('/product/', [ProductController::class, 'list']);
+Route::get('/product/{product}', [ProductController::class, 'view']);

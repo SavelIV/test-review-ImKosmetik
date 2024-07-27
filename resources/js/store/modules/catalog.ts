@@ -15,7 +15,7 @@ export default {
         };
     },
     mutations: {
-        setData(state: State, products) {
+        setData(state: State, products: []) {
             state.products = products;
         },
         setStatus(state: State, status: string) {

@@ -1,6 +1,6 @@
 `cp .env.example .env`
 
-`docker-compose up-d`
+`docker-compose up -d`
 
 `docker exec -it test_review_fpm sh`
 
@@ -13,6 +13,8 @@
 `php artisan migrate`
 
 `php artisan db:seed --class=ProductSeeder`
+
+`php artisan db:seed --class=DatabaseSeeder`
 
 `exit`
 

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Favorite;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * Class FavoriteController
@@ -16,46 +14,53 @@ use JetBrains\PhpStorm\ArrayShape;
  */
 class FavoriteController extends Controller
 {
-    public function list(): Collection
+    /**
+     * @param int $userId
+     * @return JsonResponse
+     */
+    public function list(int $userId): JsonResponse
     {
-        return Favorite::all();
-    }
-
-    public function count(): int
-    {
-        return Favorite::count();
-    }
-
-    #[ArrayShape(['message' => "string"])] public function add(Request $request, int $elementId): array
-    {
-        $sessionId = Session::getId();
-        $existingFavorite = Favorite::where('session_id', $sessionId)
-            ->where('product_id', $elementId)
-            ->first();
-
-        if ($existingFavorite) {
-            return ['message' => 'Element already in favorites.'];
+        if ($user = User::find($userId)) {
+            return response()->json($user->favoriteProducts()->get());
         }
-
-        Favorite::create([
-            'session_id' => $sessionId,
-            'product_id' => $elementId,
-        ]);
-
-        return ['message' => 'Element added to favorites.'];
     }
 
-    #[ArrayShape(['message' => "string"])] public function delete(Request $request, int $elementId): array
+    /**
+     * @param Request $request
+     * @param int $elementId
+     * @param int $userId
+     * @return JsonResponse|false
+     */
+    public function add(Request $request, int $elementId, int $userId): JsonResponse|false
     {
-        $sessionId = Session::getId();
-        $deleted = Favorite::where('session_id', $sessionId)
-            ->where('product_id', $elementId)
-            ->delete();
+        if ($user = User::find($userId)) {
+            if ($user->favoriteProducts()->pluck('products.id')->contains($elementId)) {
+                $message = 'Element already in favorites.';
+            } else {
+                $user->favoriteProducts()->attach($elementId);
+                $message = 'Element added to favorites.';
+            }
 
-        if ($deleted) {
-            return ['message' => 'Element deleted from favorites.'];
-        } else {
-            return ['message' => 'Element not found in favorites.'];
+            return response()->json(['data' => $user->favoriteProducts()->get(), 'message' => $message]);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param int $elementId
+     * @param int $userId
+     * @return JsonResponse|false
+     */
+    public function delete(Request $request, int $elementId, int $userId): JsonResponse|false
+    {
+        if ($user = User::find($userId)) {
+            if ($user->favoriteProducts()->pluck('products.id')->contains($elementId)) {
+                $user->favoriteProducts()->detach($elementId);
+                $message = 'Element deleted from favorites.';
+            } else {
+                $message = 'Element not found in favorites.';
+            }
+        }
+        return response()->json(['data' => $user->favoriteProducts()->get(), 'message' => $message]);
     }
 }

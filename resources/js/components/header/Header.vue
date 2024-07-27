@@ -23,7 +23,7 @@
         <div class="cart">
             <!-- Избранное -->
             <router-link to="/favorites">
-                <i class="fa fa-shopping-cart"></i> Избранное (0)
+                <i class="fa fa-shopping-cart"></i> Избранное ({{ favoritesCount }})
             </router-link>
         </div>
         <div class="cart">
@@ -41,9 +41,15 @@
 
 <script>
 import Logo from '../icons/Logo.vue';
+import {mapGetters} from 'vuex';
 
 export default {
     name: 'Header',
+    computed: {
+        ...mapGetters({
+            favoritesCount: 'getFavoritesCount'
+        })
+    },
     components: { Logo }
 }
 </script>
