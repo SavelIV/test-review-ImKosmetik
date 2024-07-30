@@ -17,13 +17,4 @@ class ProductController extends Controller
     {
         return Product::all();
     }
-
-    /**
-     * @param Product $product
-     * @return Product
-     */
-    public function view(Product $product): Product
-    {
-        return $product;
-    }
 }

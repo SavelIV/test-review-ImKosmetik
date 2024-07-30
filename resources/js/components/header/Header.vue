@@ -23,7 +23,7 @@
         <div class="cart">
             <!-- Избранное -->
             <router-link to="/favorites">
-                <i class="fa fa-shopping-cart"></i> Избранное ({{ favoritesCount }})
+                <i></i> Избранное ({{ favoritesCount }})
             </router-link>
         </div>
         <div class="cart">
@@ -34,7 +34,14 @@
         </div>
         <div class="auth">
             <!-- Вход/Регистрация -->
-            <a href="/#">Вход</a> /
+            <div v-if="getToken">
+                <button type="submit" @click.prevent="logout">Logout </button>
+            </div>
+            <div v-else>
+                <router-link to="/user/login">
+                    <i></i> Вход
+                </router-link>
+            </div>
         </div>
     </header>
 </template>
@@ -45,12 +52,26 @@ import {mapGetters} from 'vuex';
 
 export default {
     name: 'Header',
+    components: {Logo},
+    data() {
+        return {
+            token: null
+        }
+    },
     computed: {
         ...mapGetters({
             favoritesCount: 'getFavoritesCount'
-        })
+        }),
+        getToken() {
+            this.token = localStorage.getItem('x-token')
+            return this.token;
+        }
     },
-    components: { Logo }
+    methods: {
+        logout() {
+            this.$store.dispatch('auth/logout', this.user)
+        },
+    },
 }
 </script>
 

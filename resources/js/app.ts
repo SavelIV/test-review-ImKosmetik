@@ -1,10 +1,16 @@
 import { createApp } from 'vue';
 import App from './components/App.vue';
-import axios from "axios";
+import axios from 'axios';
 import store from './store';
 import router from './router/index';
 
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+const instance = axios.create({
+    withCredentials: true,
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json'
+    }
+})
 
 const app = createApp({
     components: {

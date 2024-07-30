@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class FavoriteController
@@ -15,25 +15,25 @@ use Illuminate\Http\Request;
 class FavoriteController extends Controller
 {
     /**
-     * @param int $userId
-     * @return JsonResponse
+     * @return JsonResponse|false
      */
-    public function list(int $userId): JsonResponse
+    public function list(): JsonResponse|false
     {
-        if ($user = User::find($userId)) {
+        if ($user = Auth::user()) {
             return response()->json($user->favoriteProducts()->get());
         }
+
+        return false;
     }
 
     /**
      * @param Request $request
      * @param int $elementId
-     * @param int $userId
      * @return JsonResponse|false
      */
-    public function add(Request $request, int $elementId, int $userId): JsonResponse|false
+    public function add(Request $request, int $elementId): JsonResponse|false
     {
-        if ($user = User::find($userId)) {
+        if ($user = Auth::user()) {
             if ($user->favoriteProducts()->pluck('products.id')->contains($elementId)) {
                 $message = 'Element already in favorites.';
             } else {
@@ -43,24 +43,28 @@ class FavoriteController extends Controller
 
             return response()->json(['data' => $user->favoriteProducts()->get(), 'message' => $message]);
         }
+
+        return false;
     }
 
     /**
      * @param Request $request
      * @param int $elementId
-     * @param int $userId
      * @return JsonResponse|false
      */
-    public function delete(Request $request, int $elementId, int $userId): JsonResponse|false
+    public function delete(Request $request, int $elementId): JsonResponse|false
     {
-        if ($user = User::find($userId)) {
+        if ($user = Auth::user()) {
             if ($user->favoriteProducts()->pluck('products.id')->contains($elementId)) {
                 $user->favoriteProducts()->detach($elementId);
                 $message = 'Element deleted from favorites.';
             } else {
                 $message = 'Element not found in favorites.';
             }
+
+            return response()->json(['data' => $user->favoriteProducts()->get(), 'message' => $message]);
         }
-        return response()->json(['data' => $user->favoriteProducts()->get(), 'message' => $message]);
+
+        return false;
     }
 }
