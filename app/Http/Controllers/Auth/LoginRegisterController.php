@@ -17,7 +17,7 @@ class LoginRegisterController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
         $validate = Validator::make($request->all(), [
             'name' => 'required|string|max:250',
@@ -57,7 +57,7 @@ class LoginRegisterController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $validate = Validator::make($request->all(), [
             'email' => 'required|string|email',

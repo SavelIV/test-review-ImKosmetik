@@ -7,6 +7,13 @@
                         <h1 class="text-center">Register</h1>
                         <hr/>
                         <form class="row" method="post">
+                            <div class="col-12" v-if="errors.length > 0">
+                                <div class="alert alert-danger">
+                                    <ul class="mb-0">
+                                        <li v-for="(error, key) in errors" :key="key">{{ error[0] }}</li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="form-group col-12">
                                 <label for="name" class="font-weight-bold">Name</label>
                                 <input type="text" name="name" v-model="user.name" id="name" placeholder="Enter name" class="form-control">
@@ -40,6 +47,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 
 export default {
     name: 'Register',
@@ -51,6 +59,11 @@ export default {
             password_confirmation: ""
         },
     }),
+    computed: {
+        ...mapGetters({
+            errors: 'auth/getErrors',
+        }),
+    },
     methods: {
         register() {
             this.$store.dispatch('auth/registerUser', this.user)

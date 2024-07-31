@@ -7,6 +7,13 @@
                         <h1 class="text-center">Login</h1>
                         <hr/>
                         <form class="row" method="post">
+                            <div class="col-12" v-if="errors.length > 0">
+                                <div class="alert alert-danger">
+                                    <ul class="mb-0">
+                                        <li v-for="(error, key) in errors" :key="key">{{ error[0] }}</li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="form-group col-12">
                                 <label for="email" class="font-weight-bold">Email</label>
                                 <input type="text" v-model="user.email" name="email" id="email" class="form-control">
@@ -32,6 +39,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
 
 export default {
     name: 'Login',
@@ -39,8 +47,13 @@ export default {
         user: {
             email: "",
             password: "",
-        }
+        },
     }),
+    computed: {
+        ...mapGetters({
+            errors: 'auth/getErrors',
+        }),
+    },
     methods: {
         login() {
             this.$store.dispatch('auth/loginUser', this.user)

@@ -26,7 +26,7 @@ export default {
         }
     },
     actions: {
-        loadProducts({commit}) {
+        loadProducts({commit}: any) {
             axios.get('/api/product/')
                 .then(response => {
                     commit('setData', response.data)
@@ -34,6 +34,6 @@ export default {
         },
     },
     getters: {
-        getProducts: state => state.products
+        getProducts: (state: { products: []; }) => state.products
     }
 }

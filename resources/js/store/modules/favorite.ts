@@ -26,20 +26,20 @@ export default {
         },
     },
     actions: {
-        loadFavorites({commit}) {
+        loadFavorites({commit}: any) {
             axios.get('/api/favorite')
                 .then(response => {
                     commit('setFavorites', response.data)
                 })
         },
-        addToFavorites({commit}, id) {
+        addToFavorites({commit}: any, id: number) {
             axios.post(`/api/favorite/${id}`)
                 .then(response => {
                     alert(response.data.message);
                     commit('setFavorites', response.data.data);
                 })
         },
-        deleteFromFavorites({commit}, id) {
+        deleteFromFavorites({commit}: any, id: number) {
             let resp = confirm('Are you sure you want to delete this product from favorites?');
             if (resp) {
                 axios.delete(`/api/favorite/${id}`)
@@ -52,7 +52,7 @@ export default {
         },
     },
     getters: {
-        getFavorites: state => state.favorites,
-        getFavoritesCount: state => state.favorites.length
+        getFavorites: (state: { favorites: []; }) => state.favorites,
+        getFavoritesCount: (state: { favorites: []; }) => state.favorites.length
     }
 }

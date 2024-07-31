@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import App from './components/App.vue';
 import axios from 'axios';
 import store from './store';
@@ -9,8 +9,19 @@ const instance = axios.create({
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json'
-    }
+    },
 })
+
+axios.interceptors.request.use(function (config) {
+    const token = localStorage.getItem('x-token');
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, function (error) {
+    return Promise.reject(error);
+});
 
 const app = createApp({
     components: {

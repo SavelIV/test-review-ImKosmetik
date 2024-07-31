@@ -12,46 +12,53 @@ export default {
         };
     },
     mutations: {
-        setErrors(state: State, invalidCredentials: []) {
-            state.errors = invalidCredentials;
+        setErrors(state: State, errors: []) {
+            state.errors = errors;
         },
     },
     actions: {
-        loginUser({commit}, user) {
+        loginUser({commit}: any, user: {
+            email: string;
+            password: string;
+        }) {
             axios.get('/sanctum/csrf-cookie').then(response => {
-                axios.post('/api/login', {
-                    email: user.email,
-                    password: user.password
-                })
+                axios.post('/api/login', user)
                     .then(response => {
                         if (response.data) {
                             localStorage.setItem('x-token', response.data.data.token)
                             window.location.replace("/")
                         }
                     }).catch((error) => {
-                    console.log(error.response)
                     if (error.response.status === 422) {
                         commit('setErrors', error.response.data.errors)
-                        console.log(this.errors)
+                    } else {
+                        commit('setErrors', {})
+                        alert(error.response.data.message)
                     }
                 })
             });
         },
-        registerUser({}, user) {
+        registerUser({commit}: any, user: {
+            name: string;
+            email: string;
+            password: string;
+            password_confirmation: string;
+        }) {
             axios.get('/sanctum/csrf-cookie').then(response => {
-                axios.post('/api/register', {
-                    name: user.name,
-                    email: user.email,
-                    password: user.password,
-                    password_confirmation: user.password_confirmation
-                })
+                axios.post('/api/register', user)
                     .then(response => {
                         if (response.data) {
+                            commit('setErrors', {})
                             localStorage.setItem('x-token', response.data.data.token)
                             window.location.replace("/")
                         }
                     }).catch((error) => {
-                    console.log(error.response)
+                    if (error.response.status === 422) {
+                        commit('setErrors', error.response.data.errors)
+                    } else {
+                        commit('setErrors', {})
+                        alert(error.response.data.message)
+                    }
                 })
             });
         },
@@ -65,6 +72,6 @@ export default {
         }
     },
     getters: {
-        getErrors: state => state.errors
+        getErrors: (state: { errors: []; }) => state.errors
     }
 }
